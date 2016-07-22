@@ -3,7 +3,7 @@
   <arg name="gui" default="False" />
   <param
     name="robot_description"
-    command="$(find xacro)/xacro.py '$(find robbase_description)/urdf/robbase.urdf.xacro'" />
+    command="$(find xacro)/xacro.py '$(find robbase_description)/urdf/husky_typewheel.urdf.xacro'" />
    <!-- textfile="$(find robbase_description)/urdf/robbase_description.URDF" -->
    
   <param name="use_gui" value="$(arg gui)" />
