@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<!--
+  ROS urdf.xacro definition of the rob44base. 'wrt'rob44_base
+  --> 
+<robot name="rob44ugv_base" xmlns:xacro="http://ros.org/wiki/xacro">
+ 	<!-- <xacro:include filename="$(find rob44base)/urdf/asus_xtion_pro.urdf.xacro" / -->
+ 	<!-- <xacro:include filename="$(find rob44base)/urdf/hokuyo_ust10lx.urdf.xacro" / --> 
+	<!-- <xacro:include filename="$(find rob44base)/urdf/sick_s3000.urdf.xacro" / --> 
+        <xacro:include filename="$(find robbase_description)/urdf/sick_s3000.urdf.xacro" />
+ 	
+ <!--All units in m-kg-s-radians unit system -->
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  <xacro:property name="DEG_TO_RAD" value="0.017453293" />
+  <xacro:property name="PI_2" value="1.570796327" />
+  <xacro:property name="wheelbase" value="0.262" />
+ 
+  <xacro:property name="wheel_radius" value="0.098" />
+  <xacro:property name="wheel_width" value="0.040" />
+  <xacro:property name="wheel_mass"   value="5.4" />
+  
+
+  <!-- jackal wrt' husky 'Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="0.262" />
+  <xacro:property name="track" value="0.37559" />
+  <xacro:property name="wheel_vertical_offset" value="0.0345" />
+
+  <xacro:property name="wheel_lateral_offset" value="0.195" />
+  <xacro:property name="wheel_longitudinal_offset" value="0.125" />
+
+  <xacro:property name="wheel_vertical_offset" value="0.01" />
+  <xacro:property name="chassis_vertical_offset" value="-0.0655" />
+  
+  <xacro:property name="chassis_length" value="0.420" />
+  <xacro:property name="chassis_width" value="0.310" />
+  <xacro:property name="chassis_height" value="0.184" />
+  <!-- Base Size -->
+  <property name="x_base" value="0.9874" />
+  <property name="y_base" value="0.5709" />
+  <property name="z_base" value="0.2475" />
+  
+  <!-- husky 'wrt' jackal Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="0.5120" />
+  <xacro:property name="track" value="0.5708" />
+  <xacro:property name="wheel_vertical_offset" value="0.03282" />
+  
+  <material name="dark_grey"><color rgba="0.2 0.2 0.2 1.0" /></material>
+  <material name="light_grey"><color rgba="0.4 0.4 0.4 1.0" /></material>
+  <material name="yellow"><color rgba="0.8 0.8 0.0 1.0" /></material>
+  <material name="black"><color rgba="0.15 0.15 0.15 1.0" /></material>
+
+  <macro name="box_inertia" params="m x y z">
+  <inertia  ixx="${m*(y*y+z*z)/12}" ixy = "0" ixz = "0"
+            iyy="${m*(x*x+z*z)/12}" iyz = "0"
+            izz="${m*(x*x+z*z)/12}" /> 
+  </macro> 	  
+
+  <!-- hokuyo '
+  <xacro:sensor_hokuyo_ust10lx name="hukuyo" parent="base_link"  min_angle="-1.57" max_angle="1.57"> 
+    <origin xyz="0.059 0 0.2875" rpy="0 0 0"/>    
+  </xacro:sensor_hokuyo_ust10lx>
+  -->
+
+  <!-- Sick s3000 'wrt' LMS511 '-->
+  <!-- <xacro:include filename="$(find robotnik_sensors)/urdf/sick_s3000.urdf.xacro" / --> 
+  <xacro:sensor_sick_s3000 name="s3000" parent="base_link"> 
+    <origin xyz="0.15 0 0.35" rpy="0 0 0"/>    
+  </xacro:sensor_sick_s3000>
+  
+  
+  <link name="base_link">
+    <visual>
+        <origin xyz="0 0 ${chassis_vertical_offset}" rpy="${M_PI/2} 0 ${M_PI/2}" />
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-base_link.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0.501960784313725 0 0.501960784313725 1" />
+      </material>
+    </visual>
+      <collision>
+        <origin xyz="0 0 ${z_base/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${x_base} ${y_base} ${z_base/2}"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0 0 ${z_base*3/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${x_base*4/5} ${y_base} ${z_base/2}"/>
+        </geometry>
+      </collision>
+  </link>
+  
+  
+  <link name="wheel_front_l">
+    <visual>
+        <origin xyz="${wheel_longitudinal_offset} ${wheel_lateral_offset} ${wheel_vertical_offset}" rpy="${M_PI/2} ${M_PI/2} 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="front_lwheel_to_base" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="wheel_front_l" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="wheel_front_r">
+    <visual>
+        <origin xyz="${wheel_longitudinal_offset} ${-wheel_lateral_offset} ${wheel_vertical_offset}" rpy="${M_PI/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="front_rwheel_to_base" type="fixed">
+    <origin xyz="0 0 0"
+      rpy="-4.9304E-32 0 0" />
+    <parent link="base_link" />
+    <child link="wheel_front_r" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  
+  <link name="wheel_rear_l">
+    <visual>
+        <origin xyz="${-wheel_longitudinal_offset} ${wheel_lateral_offset} ${wheel_vertical_offset}" rpy="${M_PI/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0 0 1 1" />
+      </material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="rear_lwheel_to_base" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="wheel_rear_l" />
+    <axis xyz="0 0 0" />
+  </joint>
+  
+  <link name="wheel_rear_r">
+    <visual>
+        <origin xyz="${-wheel_longitudinal_offset} ${-wheel_lateral_offset} ${wheel_vertical_offset}" rpy="${M_PI/2} 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0 0 1 1" />
+      </material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-wheel.stl" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="rear_rwheel_to_base" type="fixed">
+    <origin xyz="0 0 0"
+      rpy="-4.9304E-32 0 0" />
+    <parent link="base_link" />
+    <child link="wheel_rear_r" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  
+
+  <link name="fenders_link">
+    <visual>
+      <origin xyz="0 0 ${chassis_vertical_offset}" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/jackal-fenders.stl"/>
+      </geometry>
+      <material name="light_grey" />
+    </visual>
+  </link>
+
+  <joint name="fenders_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="fenders_link" />
+  </joint>
+
+
+</robot>

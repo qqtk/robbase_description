@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<!--
+  ROS urdf.xacro definition of the rob44base. 'wrt'rob44_base
+  --> 
+<robot name="rob44ugv_base" xmlns:xacro="http://ros.org/wiki/xacro">
+ 	<!-- <xacro:include filename="$(find rob44base)/urdf/asus_xtion_pro.urdf.xacro" / -->
+ 	<!-- <xacro:include filename="$(find rob44base)/urdf/hokuyo_ust10lx.urdf.xacro" / --> 
+	<!-- <xacro:include filename="$(find rob44base)/urdf/sick_s3000.urdf.xacro" / --> 
+        <xacro:include filename="$(find robbase_description)/urdf/sick_s3000.urdf.xacro" />
+        <!-- xacro:include filename="$(find rob44base)/urdf/husky_decorations.urdf.xacro" / -->
+ 	
+  <!-- z' <xacro:include filename="$(find rob44base)/urdf/husky-wheel.urdf.xacro" / -->
+  
+ <!--All units in m-kg-s-radians unit system -->
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  <xacro:property name="DEG_TO_RAD" value="0.017453293" />
+  <xacro:property name="PI_2" value="1.570796327" />
+  <xacro:property name="wheelbase" value="0.262" />
+ 
+  <!-- Wheel Properties -->
+  <xacro:property name="wheel_length" value="0.1143" />
+  <xacro:property name="wheel_radius" value="0.17775" />
+
+  <!-- was'mass' ${M_PI/2} wrt' PI_2 -->
+  <xacro:property name="wheel_width"  value="0.160" />
+  <xacro:property name="wheel_mass"   value="5.4" />
+
+  <!-- Base Size -->
+  <property name="x_base" value="0.9874" />
+  <property name="y_base" value="0.5709" />
+  <property name="z_base" value="0.2475" />
+  
+  <!-- husky 'wrt' jackal Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="0.5120" />
+  <xacro:property name="track" value="0.5708" />
+  <xacro:property name="wheel_vertical_offset" value="0.03282" />
+  
+  <material name="dark_grey"><color rgba="0.2 0.2 0.2 1.0" /></material>
+  <material name="light_grey"><color rgba="0.4 0.4 0.4 1.0" /></material>
+  <material name="black"><color rgba="0.15 0.15 0.15 1.0" /></material>
+  
+  <!-- hokuyo '
+  <xacro:sensor_hokuyo_ust10lx name="hukuyo" parent="base_link"  min_angle="-1.57" max_angle="1.57"> 
+    <origin xyz="0.059 0 0.2875" rpy="0 0 0"/>    
+  </xacro:sensor_hokuyo_ust10lx>
+  -->
+
+  <!-- Sick s3000 'wrt' LMS511 '-->
+  <!-- <xacro:include filename="$(find robotnik_sensors)/urdf/sick_s3000.urdf.xacro" / --> 
+  <xacro:sensor_sick_s3000 name="s3000" parent="base_link"> 
+    <origin xyz="0.159 0 0.3875" rpy="0 0 0"/>    
+  </xacro:sensor_sick_s3000>
+  
+  <!-- Base link is the center of the robot's bottom plate -->
+    <link name="base_link">
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/husky-base_link.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0.501960784313725 0 0.501960784313725 1" />
+      </material>
+    </visual>
+      <collision>
+        <origin xyz="0 0 ${z_base/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${x_base} ${y_base} ${z_base/2}"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0 0 ${z_base*3/4}" rpy="0 0 0" />
+        <geometry>
+          <box size="${x_base*4/5} ${y_base} ${z_base/2}"/>
+        </geometry>
+      </collision>
+  </link>
+  
+    <!-- Base footprint is on the ground under the robot -->
+    <link name="base_floor"/>
+
+    <joint name="base_floor_joint" type="fixed">
+      <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="base_floor" />
+    </joint>
+
+    <!-- Interial link stores the robot's inertial information -->
+    <link name="inertial_link">
+      <inertial>
+        <mass value="33.455" />
+        <origin xyz="-0.08748 -0.00085 0.09947" />
+        <inertia
+	  ixx="0.6022" ixy="-0.02364" ixz="-0.1197"
+	  iyy="1.7386" iyz="-0.001544" 
+	  izz="2.0296" />
+      </inertial>
+    </link>
+
+    <joint name="inertial_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="inertial_link" />
+    </joint>
+
+
+  <xacro:macro name="wheel" params="wheel_prefix *joint_pose">
+
+    <link name="${wheel_prefix}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robbase_description/meshes/husky-wheel.stl"/>
+        </geometry>
+        <material name="black" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <inertial>
+      <!-- husky_UGV-wheel -->
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="2.637" />
+        <inertia  ixx="0.02467" ixy="0" ixz="0" iyy="0.02467" iyz="0" izz="0.04411" />
+      </inertial>
+    </link>
+
+    <joint name="${wheel_prefix}_wheel" type="continuous">
+      <parent link="base_link"/>
+      <child link="${wheel_prefix}_wheel_link" />
+      <xacro:insert_block name="joint_pose" />
+      <axis xyz="0 1 0" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel wheel_prefix="front_left">
+    <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+  </xacro:wheel>
+  <xacro:wheel wheel_prefix="front_right">
+    <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+  </xacro:wheel>
+  <xacro:wheel wheel_prefix="rear_left">
+    <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+  </xacro:wheel>
+  <xacro:wheel wheel_prefix="rear_right">
+    <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+  </xacro:wheel>
+
+    <!-- Spawn Husky chassis -->
+    <link name="top_chassis_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://robbase_description/meshes_husky/top_chassis.stl" />
+        </geometry>
+        <material name="black" />
+      </visual>
+    </link>
+
+    <!-- Attach chassis to the robot -->
+    <joint name="top_chassis_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="top_chassis_link" />
+    </joint>
+
+      <!-- Spawn the top plate -->
+      <!-- Attach top plate -->
+
+    <!-- Spawn user rails : rect' -->
+
+    <!-- Spawn front bumper link -->
+    <link name="front_bumper_link">
+      <visual>
+        <geometry>
+          <mesh filename="package://robbase_description/meshes_husky/bumper.stl" />
+        </geometry>
+        <material name="light_grey" />
+      </visual>
+    </link>
+
+    <!-- Attach front bumper -->
+    <joint name="front_bumper" type="fixed">
+      <origin xyz="0.48 0 0.091" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="front_bumper_link" />
+    </joint>
+
+  
+</robot>
