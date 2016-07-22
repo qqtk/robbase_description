@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="sensor_sick_s3000" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <xacro:macro name="sensor_sick_s3000" params="name parent *origin">
+     
+    <joint name="${name}_laser_joint" type="fixed">
+      <insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${name}_laser_link"/>
+	</joint>
+
+  
+	<link name="${name}_laser_link">
+		<collision>
+			<origin xyz="-0.093 0 -0.0625" rpy="0 0 0"/>
+			<geometry>
+	     		<mesh filename="package://robbase_description/meshes/sick_s3000.dae"/>
+			</geometry>
+		</collision>
+
+		<visual>
+			<origin xyz="-0.093 0 -0.0625" rpy="0 0 0"/>
+			<geometry>
+	     		<mesh filename="package://robbase_description/meshes/sick_s3000.dae"/>
+			</geometry>
+		</visual>
+
+		<inertial>
+			<mass value="1e-5" />
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+		</inertial>
+	</link>
+	
+
+	<!-- Sick sensor sensor for simulation -->		
+	<sensor_sick_s3000_gazebo/>
+		
+  </xacro:macro>
+  
+ 
+  
+</robot>
