@@ -5,7 +5,7 @@
   <description>The rob44base_robot_description package</description>
 
   <maintainer email="author@163.com">author</maintainer>
-  <license>TODO</license>
+  <license>BSD</license>
 
   <author> author</author>
   <buildtool_depend>catkin</buildtool_depend>
