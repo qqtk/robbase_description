@@ -1,0 +1,29 @@
+
+  <link name="wheel_front_c">
+    <visual>
+        <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/lwheel-15cm.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robbase_description/meshes/lwheel-15cm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="front_lcwheel_to_base"
+    type="fixed">
+    <origin xyz="0.30 0 0.20"
+      rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="wheel_front_c" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+   
