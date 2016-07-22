@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>robbase_description</name>
+  <version>0.0.1</version>
+  <description>The rob44base_robot_description package</description>
+
+  <maintainer email="author@163.com">author</maintainer>
+  <license>TODO</license>
+
+  <author> author</author>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+  
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>nodelet</run_depend>
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+
+</package>
